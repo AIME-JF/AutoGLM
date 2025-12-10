@@ -16,13 +16,14 @@ ADB（Android Debug Bridge）来控制设备，以视觉语言模型进行屏幕
 Agent 即可自动解析意图、理解当前界面、规划下一步动作并完成整个流程。系统还内置敏感操作确认机制，并支持在登录或验证码场景下进行人工接管。同时，它提供远程
 ADB 调试能力，可通过 WiFi 或网络连接设备，实现灵活的远程控制与开发。
 
-> ⚠️ 本项目仅供研究和学习使用。严禁用于非法获取信息、干扰系统或任何违法活动。请仔细审阅 [使用条款](resources/privacy_policy.txt)。
+> ⚠️
+> 本项目仅供研究和学习使用。严禁用于非法获取信息、干扰系统或任何违法活动。请仔细审阅 [使用条款](resources/privacy_policy.txt)。
 
 ## 模型下载地址
 
-| Model             | Download Links                                                                                                                                             |
-|-------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| AutoGLM-Phone-9B  | [🤗 Hugging Face](https://huggingface.co/zai-org/AutoGLM-Phone-9B)<br>[🤖 ModelScope](https://modelscope.cn/models/ZhipuAI/AutoGLM-Phone-9B)               |
+| Model                         | Download Links                                                                                                                                                         |
+|-------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| AutoGLM-Phone-9B              | [🤗 Hugging Face](https://huggingface.co/zai-org/AutoGLM-Phone-9B)<br>[🤖 ModelScope](https://modelscope.cn/models/ZhipuAI/AutoGLM-Phone-9B)                           |
 | AutoGLM-Phone-9B-Multilingual | [🤗 Hugging Face](https://huggingface.co/zai-org/AutoGLM-Phone-9B-Multilingual)<br>[🤖 ModelScope](https://modelscope.cn/models/ZhipuAI/AutoGLM-Phone-9B-Multilingual) |
 
 其中，`AutoGLM-Phone-9B` 是针对中文手机应用优化的模型，而 `AutoGLM-Phone-9B-Multilingual` 支持英语场景，适用于包含英文等其他语言内容的应用。
@@ -90,8 +91,34 @@ adb devices
 
 ### 3. 启动模型服务
 
-1. 下载模型，并按照 `requirements.txt` 中 `For Model Deployment` 章节自行安装推理引擎框架。
-2. 通过 SGlang / vLLM 启动，得到 OpenAI 格式服务。这里提供一个 vLLM部署方案，请严格遵循我们提供的启动参数:
+1. 按照 `requirements.txt` 中 `For Model Deployment` 章节自行安装推理引擎框架。 
+
+对于SGLang， 除了使用pip安装，你也可以使用官方docker: 
+>
+> ```shell
+> docker pull lmsysorg/sglang:v0.5.6.post1
+> ```
+>
+> 进入容器，执行 
+> ```
+> pip install nvidia-cudnn-cu12==9.16.0.29
+> ```
+
+对于 vLLM，除了使用pip 安装，你也可以使用官方docker: 
+>
+> ```shell
+> docker pull vllm/vllm-openai:v0.12.0
+> ```
+>
+> 进入容器，执行 
+> ```
+> pip install -U transformers --pre
+> ```
+
+
+**注意**: 上述步骤出现的关于 transformers 的依赖冲突可以忽略。
+
+2. 在对应容器或者实体机中（非容器安装）下载模型，通过 SGlang / vLLM 启动，得到 OpenAI 格式服务。这里提供一个 vLLM部署方案，请严格遵循我们提供的启动参数:
 
 - vLLM:
 
@@ -107,6 +134,17 @@ python3 -m vllm.entrypoints.openai.api_server \
  --limit-mm-per-prompt "{\"image\":10}" \
  --model zai-org/AutoGLM-Phone-9B \
  --port 8000
+```
+
+- SGLang:
+
+```shell
+python3 -m sglang.launch_server --model-path  zai-org/AutoGLM-Phone-9B \
+        --served-model-name autoglm-phone-9b  \
+        --context-length 25480  \
+        --mm-enable-dp-encoder   \
+        --mm-process-config '{"image":{"max_pixels":5000000}}'  \
+        --port 8000
 ```
 
 - 该模型结构与 `GLM-4.1V-9B-Thinking` 相同, 关于模型部署的详细内容，你也以查看 [GLM-V](https://github.com/zai-org/GLM-V)
@@ -448,6 +486,7 @@ adb devices
 ```
 
 如果仍然无法识别，请检查：
+
 1. USB 调试是否已开启
 2. 数据线是否支持数据传输（部分数据线仅支持充电）
 3. 手机上弹出的授权框是否已点击「允许」
@@ -456,6 +495,7 @@ adb devices
 ### 能打开应用，但无法点击
 
 部分机型需要同时开启两个调试选项才能正常使用：
+
 - **USB 调试**
 - **USB 调试（安全设置）**
 
@@ -472,11 +512,13 @@ adb devices
 这通常意味着应用正在显示敏感页面（支付、密码、银行类应用）。Agent 会自动检测并请求人工接管。
 
 ### windows 编码异常问题
+
 报错信息形如 `UnicodeEncodeError gbk code`
 
 解决办法: 在运行代码的命令前面加上环境变量: `PYTHONIOENCODING=utf-8`
 
 ### 交互模式非TTY环境无法使用
+
 报错形如: `EOF when reading a line`
 
 解决办法: 使用非交互模式直接指定任务, 或者切换到 TTY 模式的终端应用.
