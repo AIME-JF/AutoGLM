@@ -62,7 +62,12 @@ def check_system_requirements() -> bool:
         # Double check by running adb version
         try:
             result = subprocess.run(
-                ["adb", "version"], capture_output=True, text=True, timeout=10
+                ["adb", "version"],
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="ignore",
+                timeout=10,
             )
             if result.returncode == 0:
                 version_line = result.stdout.strip().split("\n")[0]
@@ -90,7 +95,12 @@ def check_system_requirements() -> bool:
     print("2. Checking connected devices...", end=" ")
     try:
         result = subprocess.run(
-            ["adb", "devices"], capture_output=True, text=True, timeout=10
+            ["adb", "devices"],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="ignore",
+            timeout=10,
         )
         lines = result.stdout.strip().split("\n")
         # Filter out header and empty lines, look for 'device' status
@@ -129,6 +139,8 @@ def check_system_requirements() -> bool:
             ["adb", "shell", "ime", "list", "-s"],
             capture_output=True,
             text=True,
+            encoding="utf-8",
+            errors="ignore",
             timeout=10,
         )
         ime_list = result.stdout.strip()
@@ -295,21 +307,21 @@ Examples:
     parser.add_argument(
         "--base-url",
         type=str,
-        default=os.getenv("PHONE_AGENT_BASE_URL", "http://localhost:8000/v1"),
+        default=os.getenv("PHONE_AGENT_BASE_URL", "https://open.bigmodel.cn/api/paas/v4"),
         help="Model API base URL",
     )
 
     parser.add_argument(
         "--model",
         type=str,
-        default=os.getenv("PHONE_AGENT_MODEL", "autoglm-phone-9b"),
+        default=os.getenv("PHONE_AGENT_MODEL", "AutoGLM-Phone"),
         help="Model name",
     )
 
     parser.add_argument(
         "--apikey",
         type=str,
-        default=os.getenv("PHONE_AGENT_API_KEY", "EMPTY"),
+        default=os.getenv("PHONE_AGENT_API_KEY", "545d609d798548cb9bb91e588c8cd686.gmStP2DJBJxiKy2c"),
         help="API key for model authentication",
     )
 

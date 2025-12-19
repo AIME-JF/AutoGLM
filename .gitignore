@@ -54,6 +54,9 @@ Thumbs.db
 *.log
 /tmp/
 screenshots/
+server/data/
+tools/
+frontend/node_modules/
 
 # Keep old files during transition
 call_model.py

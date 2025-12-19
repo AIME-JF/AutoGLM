@@ -279,17 +279,37 @@ def parse_action(response: str) -> dict[str, Any]:
         ValueError: If the response cannot be parsed.
     """
     try:
-        # Try to evaluate as Python dict/function call
-        response = response.strip()
-        if response.startswith("do"):
-            action = eval(response)
-        elif response.startswith("finish"):
-            action = {
-                "_metadata": "finish",
-                "message": response.replace("finish(message=", "")[1:-2],
-            }
+        s = response.strip()
+        s = s.replace("<|begin_of_box|>", "").replace("<|end_of_box|>", "")
+        s = s.replace("<think>", "").replace("</think>", "")
+        s = s.replace("<answer>", "").replace("</answer>", "")
+        s = s.strip()
+        if s.startswith("do") or s.startswith("finish"):
+            target = s
         else:
-            raise ValueError(f"Failed to parse action: {response}")
+            pos_do = s.find("do(")
+            pos_fin = s.find("finish(")
+            pos = -1
+            if pos_do != -1 and pos_fin != -1:
+                pos = min(pos_do, pos_fin)
+            elif pos_do != -1:
+                pos = pos_do
+            elif pos_fin != -1:
+                pos = pos_fin
+            if pos == -1:
+                raise ValueError(f"Failed to parse action: {response}")
+            depth = 0
+            end = len(s)
+            for i, ch in enumerate(s[pos:], start=pos):
+                if ch == "(":
+                    depth += 1
+                elif ch == ")":
+                    depth -= 1
+                    if depth == 0:
+                        end = i + 1
+                        break
+            target = s[pos:end]
+        action = eval(target)
         return action
     except Exception as e:
         raise ValueError(f"Failed to parse action: {e}")
