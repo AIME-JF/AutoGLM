@@ -1,4 +1,6 @@
 # Open-AutoGLM · 自媒体养号平台（前后端一体）
+![img_v3_02to_9b4bd7be-e79d-4024-8b20-86949c5005eg](https://github.com/user-attachments/assets/b035d4fc-033b-4cc5-9b5c-800748030cb4)![img_v3_02to_428338d6-0eeb-42de-8b79-f643c9ea246g](https://github.com/user-attachments/assets/ef2c424c-a862-417d-8997-e7a7fcf7eeff)
+![img_v3_02to_0b621d83-0a7a-478e-ac39-0c46ea57dbeg](https://github.com/user-attachments/assets/66f1863c-cc97-47eb-a633-99f5b37d5276)![img_v3_02to_e86c988f-aff6-494e-a493-3558169f80eg](https://github.com/user-attachments/assets/95a8f309-7014-43fd-91f7-1d830df47e1b)
 
 Open-AutoGLM 是一个“视觉大模型 + ADB 手机自动化”的完整平台，支持模型配置中心、设备管理大屏、任务控制台（实时画面 + 实时日志）等核心功能，面向刷帖、评论、点赞等场景的自动化运营。
 
