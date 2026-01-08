@@ -8,10 +8,10 @@ from server.core.scheduler import init_scheduler, shutdown_scheduler, load_sched
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """应用生命周期管理"""
-    # 启动�?    init_scheduler()
+    # 启动�?    init_scheduler()
     load_scheduled_tasks()
     yield
-    # 关闭�?    shutdown_scheduler()
+    # 关闭�?    shutdown_scheduler()
 
 
 app = FastAPI(title="Open-AutoGLM Web API", lifespan=lifespan)
